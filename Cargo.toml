@@ -5,6 +5,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0.62"
 openapi-client-generator = { git = "https://github.com/libninjacom/openapi-client-generator" }
 serde_yaml = "0.8.23"
 

@@ -1,10 +1,13 @@
 use std::env;
 use std::fs::File;
+use std::path::PathBuf;
+use std::str::FromStr;
 use openapi_client_generator::{OpenAPI, GenerateLibraryOptions};
 use openapi_client_generator::generate_library;
 use openapi_client_generator::openapiv3::{SchemaKind, Type};
 use openapi_client_generator::sourcegen::SourceGen;
 use serde_yaml::Value;
+use anyhow::Result;
 
 
 fn modify_spec(spec: &mut OpenAPI) {
@@ -39,7 +42,7 @@ fn modify_spec(spec: &mut OpenAPI) {
                         _ => true,
                     }
                 })
-            },
+            }
             _ => {}
         }
     });
@@ -96,9 +99,10 @@ fn modify_spec(spec: &mut OpenAPI) {
 }
 
 
-fn main() {
-    let version = env::var("VERSION").expect("VERSION is not set.");
+fn main() -> Result<()> {
+    let package_version = env::var("VERSION").expect("VERSION is not set.");
     let openapi_path = env::var("OPENAPI_PATH").expect("OPENAPI_PATH is not set.");
+    let generator = SourceGen::from_str(&env::var("GENERATOR").expect("GENERATOR is not set."))?;
     let file = File::open(&openapi_path).expect("Could not open OpenAPI file.");
     let mut yaml: Value = serde_yaml::from_reader(file).expect("Could not parse OpenAPI file.");
     yaml["components"]["schemas"]["PartnerCustomersCreateRequest"]["type"] = Value::from("object");
@@ -107,14 +111,29 @@ fn main() {
 
     modify_spec(&mut spec);
 
+    let repo_name = match generator {
+        SourceGen::Rust => "plaid-rs",
+        SourceGen::Python => "plaid-python",
+        SourceGen::Typescript => "plaid-ts",
+        SourceGen::Golang => "plaid-go",
+    };
+    let org_name = "libninjacom";
+    let dest_path = PathBuf::from_str("..").unwrap().join(repo_name);
+    let qualified_github_repo = format!("{}/{}", org_name, repo_name);
+    let package_name = match generator {
+        SourceGen::Python => "plaid2",
+        _ => "plaid"
+    }.to_string();
+
     generate_library(spec, GenerateLibraryOptions {
-        package_name: "plaid".to_string(),
+        package_name,
         service_name: "Plaid".to_string(),
-        qualified_github_repo: "libninjacom/plaid-rs".to_string(),
-        dest_path: "../plaid-rs".into(),
+        qualified_github_repo,
+        dest_path,
         lib_rs_path: Some("template/src/lib.rs".into()),
         model_rs_path: Some("template/src/model.rs".into()),
-        package_version: version.to_string(),
-        generator: SourceGen::Rust
+        package_version,
+        generator,
     }).unwrap();
+    Ok(())
 }

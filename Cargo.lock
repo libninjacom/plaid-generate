@@ -464,7 +464,6 @@ checksum = "074864da206b4973b84eb91683020dbefd6a8c3f0f38e054d93954e891935e4e"
 [[package]]
 name = "openapi-client-generator"
 version = "0.1.9"
-source = "git+https://github.com/libninjacom/openapi-client-generator#b3e8fb917a65182cf6a5972a410ecea419773db1"
 dependencies = [
  "anyhow",
  "cargo_toml",
@@ -486,6 +485,7 @@ dependencies = [
  "tera",
  "tokio",
  "toml",
+ "topo_sort",
 ]
 
 [[package]]
@@ -636,6 +636,7 @@ checksum = "e0a7ae3ac2f1173085d398531c705756c94a4c56843785df85a60c1a0afac116"
 name = "plaid-generate"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "openapi-client-generator",
  "serde_yaml",
 ]
@@ -968,6 +969,12 @@ checksum = "8d82e1a7758622a465f8cee077614c73484dac5b836c02ff6a40d5d1010324d7"
 dependencies = [
  "serde",
 ]
+
+[[package]]
+name = "topo_sort"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "156552d3c80df430aaac98c605a4e0eb7da8d06029cce2d40b4a6b095a34b37e"
 
 [[package]]
 name = "typenum"
