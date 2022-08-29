@@ -130,8 +130,8 @@ fn main() -> Result<()> {
         service_name: "Plaid".to_string(),
         qualified_github_repo,
         dest_path,
-        lib_rs_path: Some("template/src/lib.rs".into()),
-        model_rs_path: Some("template/src/model.rs".into()),
+        lib_rs_path: Some("template/rust/src/lib.rs".into()),
+        model_rs_path: Some("template/rust/src/model.rs".into()),
         package_version,
         generator,
     }).unwrap();
